@@ -1,5 +1,7 @@
 "use client";
 
+import DashboardLayout from "@/components/DashboardLayout";
+import PropertyRatingsChart from "@/components/PropertyRatingsChart";
 import { useEffect, useState } from "react";
 import type { NormalizedReview } from "@/types/reviews";
 
@@ -9,24 +11,18 @@ export default function DashboardPage() {
   const [propertyFilter, setPropertyFilter] = useState<string>("all");
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // Fetch reviews on load
   useEffect(() => {
     async function fetchReviews() {
-      try {
-        const res = await fetch("/api/reviews/hostaway");
-        const data = await res.json();
-        if (data.status === "success") {
-          setReviews(data.result);
-          setFiltered(data.result);
-        }
-      } catch (err) {
-        console.error("Failed to fetch reviews:", err);
+      const res = await fetch("/api/reviews/hostaway");
+      const data = await res.json();
+      if (data.status === "success") {
+        setReviews(data.result);
+        setFiltered(data.result);
       }
     }
     fetchReviews();
   }, []);
 
-  // Apply filters
   useEffect(() => {
     let temp = [...reviews];
     if (propertyFilter !== "all") {
@@ -38,14 +34,11 @@ export default function DashboardPage() {
     setFiltered(temp);
   }, [propertyFilter, statusFilter, reviews]);
 
-  // Unique property IDs
   const properties = Array.from(new Set(reviews.map(r => r.listingMapId)));
   const statuses = Array.from(new Set(reviews.map(r => r.status)));
 
   return (
-    <div className="p-6">
-      <h1 className="text-2xl font-bold mb-4">Manager Dashboard</h1>
-
+    <DashboardLayout>
       {/* Filters */}
       <div className="flex gap-4 mb-6">
         <select
@@ -76,7 +69,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto">
+      <div className="overflow-x-auto bg-white rounded shadow">
         <table className="min-w-full border border-gray-200">
           <thead className="bg-gray-100">
             <tr>
@@ -88,18 +81,31 @@ export default function DashboardPage() {
             </tr>
           </thead>
           <tbody>
-            {filtered.map((r) => (
-              <tr key={r.id}>
-                <td className="border p-2">{r.listingName}</td>
-                <td className="border p-2">{r.guestName}</td>
-                <td className="border p-2">{r.status}</td>
-                <td className="border p-2">{r.rating ?? "N/A"}</td>
-                <td className="border p-2">{r.publicReview ?? "—"}</td>
+            {filtered.length > 0 ? (
+              filtered.map((r) => (
+                <tr key={r.id}>
+                  <td className="border p-2">{r.listingName}</td>
+                  <td className="border p-2">{r.guestName}</td>
+                  <td className="border p-2">{r.status}</td>
+                  <td className="border p-2">{r.rating ?? "N/A"}</td>
+                  <td className="border p-2">{r.publicReview ?? "—"}</td>
+                </tr>
+              ))
+            ) : (
+              <tr>
+                <td colSpan={5} className="border p-4 text-center text-gray-500">
+                  No reviews found for the selected filters.
+                </td>
               </tr>
-            ))}
+            )}
           </tbody>
         </table>
       </div>
-    </div>
+
+      {/* Chart */}
+      <div className="mt-8 bg-white rounded shadow p-4">
+        Chart placeholder
+      </div>
+    </DashboardLayout>
   );
 }
