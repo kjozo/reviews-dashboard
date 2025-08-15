@@ -1,0 +1,50 @@
+[
+  {
+    "id": 7453,
+    "listingMapId": 123,
+    "type": "host-to-guest",
+    "status": "published",
+    "rating": null,
+    "publicReview": "Shane and family are wonderful! Would definitely host again :)",
+    "reviewCategory": [
+      { "category": "cleanliness", "rating": 10 },
+      { "category": "communication", "rating": 10 },
+      { "category": "respect_house_rules", "rating": 10 }
+    ],
+    "submittedAt": "2020-08-21 22:45:14",
+    "guestName": "Shane Finkelstein",
+    "listingName": "2B N1 A - 29 Shoreditch Heights"
+  },
+  {
+    "id": 7454,
+    "listingMapId": 124,
+    "type": "guest-to-host",
+    "status": "submitted",
+    "rating": null,
+    "publicReview": "Great location and very clean, but a bit noisy at night.",
+    "reviewCategory": [
+      { "category": "cleanliness", "rating": 8 },
+      { "category": "communication", "rating": 9 },
+      { "category": "respect_house_rules", "rating": 10 }
+    ],
+    "submittedAt": "2020-09-06 14:30:00",
+    "guestName": "Maria Gomez",
+    "listingName": "Studio Apartment - Central London"
+  },
+  {
+    "id": 7455,
+    "listingMapId": 125,
+    "type": "guest-to-host",
+    "status": "awaiting",
+    "rating": null,
+    "publicReview": null,
+    "reviewCategory": [
+      { "category": "cleanliness", "rating": 9 },
+      { "category": "communication", "rating": 8 },
+      { "category": "respect_house_rules", "rating": 9 }
+    ],
+    "submittedAt": "2020-09-12 10:15:00",
+    "guestName": "James Parker",
+    "listingName": "1B Flat - Notting Hill"
+  }
+]
