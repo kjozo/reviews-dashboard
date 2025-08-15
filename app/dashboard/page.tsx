@@ -40,9 +40,9 @@ export default function DashboardPage() {
   return (
     <DashboardLayout>
       {/* Filters */}
-      <div className="flex gap-4 mb-6">
+      <div className="flex gap-4 mb-6 text-black">
         <select
-          className="border rounded px-2 py-1"
+          className="border rounded px-2 py-1 text-black"
           value={propertyFilter}
           onChange={(e) => setPropertyFilter(e.target.value)}
         >
@@ -55,7 +55,7 @@ export default function DashboardPage() {
         </select>
 
         <select
-          className="border rounded px-2 py-1"
+          className="border rounded px-2 py-1 text-black"
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
         >
@@ -69,7 +69,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Table */}
-      <div className="overflow-x-auto bg-white rounded shadow">
+      <div className="overflow-x-auto bg-white rounded shadow text-black">
         <table className="min-w-full border border-gray-200">
           <thead className="bg-gray-100">
             <tr>
@@ -103,7 +103,7 @@ export default function DashboardPage() {
       </div>
 
       {/* Chart */}
-      <div className="mt-8 bg-white rounded shadow p-4">
+      <div className="mt-8 bg-white rounded shadow p-4 text-black">
         Chart placeholder
       </div>
     </DashboardLayout>
