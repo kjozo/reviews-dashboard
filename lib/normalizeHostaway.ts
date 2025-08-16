@@ -29,5 +29,6 @@ export function normalizeHostawayReview(r: any): NormalizedReview {
       ? new Date(r.submittedAt).toISOString()
       : null,
     source: "hostaway",
+    reviewCategory: r.reviewCategory ?? [],
   };
 }

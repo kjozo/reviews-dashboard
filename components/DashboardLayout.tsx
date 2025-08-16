@@ -1,65 +1,111 @@
 "use client";
 
-import { ReactNode } from "react";
-import { MdDashboard, MdBarChart, MdRateReview } from "react-icons/md"; // Import icons
+import { ReactNode, useState } from "react";
+import { MdDashboard, MdRateReview } from "react-icons/md";
+import { FaRegWindowRestore } from "react-icons/fa";
+
+// constants for colors
+const FLEX_GREEN = "#335C59";
+const NAVBAR_BG = "#FFFDF6";
 
 type Props = {
   children: ReactNode;
 };
 
 export default function DashboardLayout({ children }: Props) {
+  // sidebar collapsed state
+  const [collapsed, setCollapsed] = useState(false);
+
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <aside className="w-64 bg-[#556B2F] text-white flex flex-col">
-        <div className="px-6 py-4 text-xl font-bold border-b border-[#6B8E23]">
-          THE FLEX
+    <div
+      className="flex min-h-screen font-sans"
+      style={{ background: "#fff" }}
+    >
+      {/* sidebar */}
+      <aside
+        className={`${
+          collapsed ? "w-20" : "w-64"
+        } bg-[${NAVBAR_BG}] text-[#335C59] flex flex-col transition-all duration-500 ease-in-out shadow-xl`}
+        style={{
+          background: NAVBAR_BG,
+          color: FLEX_GREEN,
+        }}
+      >
+        {/* header with logo on the left, toggle on the right */}
+        <div className="flex items-center h-16 text-xl font-bold border-b border-[#e6e3d7] px-4">
+          {/* logo: visible when expanded, hidden when collapsed */}
+          {!collapsed && (
+            <img
+              src="/theflex-logo.png"
+              alt="The Flex Logo"
+              className="h-10 w-auto object-contain"
+              style={{ maxWidth: 140 }}
+            />
+          )}
+          {/* when collapsed, keep space for centering toggle */}
+          {collapsed && <div className="flex-1" />}
+          <button
+            className={`flex items-center justify-center w-10 h-10 rounded hover:text-[#B7E283] transition-all duration-300 ml-auto`}
+            onClick={() => setCollapsed((c) => !c)}
+            aria-label={collapsed ? "Open sidebar" : "Close sidebar"}
+            style={{
+              color: FLEX_GREEN,
+              background: "transparent",
+            }}
+          >
+            <FaRegWindowRestore size={22} />
+          </button>
         </div>
-        <nav className="flex-1 px-4 py-6 space-y-2">
+
+        {/* navigation */}
+        <nav className="flex-1 py-6 space-y-2">
           <a
             href="/dashboard"
-            className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#6B8E23]"
+            className={`flex items-center py-2 rounded hover:bg-[#e6e3d7] transition-all duration-300 ${
+              collapsed ? "justify-center" : "gap-3 px-6 justify-start"
+            }`}
+            style={{
+              color: FLEX_GREEN,
+              fontWeight: 600,
+            }}
           >
             <MdDashboard className="w-5 h-5" />
-            Dashboard
+            {!collapsed && <span>Dashboard</span>}
           </a>
           <a
             href="#"
-            className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#6B8E23]"
-          >
-            <MdBarChart className="w-5 h-5" />
-            Statistics
-          </a>
-          <a
-            href="#"
-            className="flex items-center gap-3 px-3 py-2 rounded hover:bg-[#6B8E23]"
+            className={`flex items-center py-2 rounded hover:bg-[#e6e3d7] transition-all duration-300 ${
+              collapsed ? "justify-center" : "gap-3 px-6 justify-start"
+            }`}
+            style={{
+              color: FLEX_GREEN,
+              fontWeight: 600,
+            }}
           >
             <MdRateReview className="w-5 h-5" />
-            Reviews
+            {!collapsed && <span>Reviews</span>}
           </a>
         </nav>
-        <div className="px-4 py-3 border-t border-[#6B8E23] text-sm">
-          © 2025 Your Company
+
+        {/* copyright */}
+        <div className="px-4 py-3 border-t border-[#e6e3d7] text-sm" style={{ color: FLEX_GREEN }}>
+          © 2025 The Flex
         </div>
       </aside>
 
-      {/* Main content area */}
-      <div className="flex-1 flex flex-col text-black">
-        {/* Top navbar */}
-        <header className="bg-white border-b px-6 py-3 flex items-center justify-between">
-          <div className="font-semibold">Welcome Back, Manager 👋</div>
+      {/* main */}
+      <div className="flex-1 flex flex-col text-black font-sans">
+        <header
+          className="bg-white px-6 py-5 flex items-center justify-between rounded-b-2xl shadow mb-2"
+          style={{ color: FLEX_GREEN }}
+        >
+          <div className="font-semibold text-lg">Welcome Back, Manager 👋</div>
           <div className="flex items-center gap-4">
-            <input
-              type="text"
-              placeholder="Search..."
-              className="border rounded px-3 py-1 text-sm text-black"
-            />
-            <div className="w-8 h-8 bg-gray-300 rounded-full"></div>
+            {/* removed search bar as requested */}
           </div>
         </header>
 
-        {/* Page content */}
-        <main className="p-6 flex-1 text-black">{children}</main>
+        <main className="p-6 flex-1">{children}</main>
       </div>
     </div>
   );
