@@ -9,7 +9,7 @@ import {
   Tooltip,
   Legend
 } from "chart.js";
-import { Bar as BarChart } from "react-chartjs-2";
+import { Bar } from "react-chartjs-2";
 import type { NormalizedReview } from "@/types/reviews";
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
@@ -19,8 +19,8 @@ type Props = {
 };
 
 export default function PropertyRatingsChart({ reviews }: Props) {
-  // Group ratings by property
   const grouped: Record<string, number[]> = {};
+
   reviews.forEach((r) => {
     if (r.rating != null) {
       const key = r.listingName || `Property ${r.listingMapId}`;
@@ -29,7 +29,6 @@ export default function PropertyRatingsChart({ reviews }: Props) {
     }
   });
 
-  // Calculate averages
   const labels = Object.keys(grouped);
   const averages = labels.map((key) => {
     const sum = grouped[key].reduce((a, b) => a + b, 0);
@@ -42,7 +41,7 @@ export default function PropertyRatingsChart({ reviews }: Props) {
       {
         label: "Average Rating",
         data: averages,
-        backgroundColor: "rgba(59, 130, 246, 0.6)", // Tailwind blue-500
+        backgroundColor: "rgba(59, 130, 246, 0.6)",
       },
     ],
   };
@@ -54,10 +53,9 @@ export default function PropertyRatingsChart({ reviews }: Props) {
       title: { display: true, text: "Average Rating per Property" },
     },
     scales: {
-      y: { beginAtZero: true, max: 5 }
-    }
+      y: { beginAtZero: true, max: 5 },
+    },
   };
 
-  return <div>Chart placeholder</div>;
-
+  return <Bar data={data} options={options} />;
 }

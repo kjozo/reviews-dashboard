@@ -104,7 +104,7 @@ export default function DashboardPage() {
 
       {/* Chart */}
       <div className="mt-8 bg-white rounded shadow p-4 text-black">
-        Chart placeholder
+        <PropertyRatingsChart reviews={filtered} />
       </div>
     </DashboardLayout>
   );
