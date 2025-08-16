@@ -16,7 +16,6 @@ import {
 import { Bar, Line } from "react-chartjs-2";
 import type { NormalizedReview } from "@/types/reviews";
 import { ChartOptions } from "chart.js";
-import { useState } from "react";
 
 // chartjs registration
 ChartJS.register(
@@ -53,47 +52,6 @@ export default function DashboardCharts({
   timeline,
   setTimeline,
 }: Props) {
-  // always show the filter dropdowns
-  const FilterControls = (
-    <div className="mb-4 flex items-center gap-4">
-      <label className="font-medium text-gray-700">Filter by property:</label>
-      <select
-        value={propertyFilter}
-        onChange={(e) => setPropertyFilter(e.target.value)}
-        className="border rounded px-2 py-1"
-      >
-        <option value="all">All</option>
-        {propertyList.map((name) => (
-          <option key={name} value={name}>
-            {name}
-          </option>
-        ))}
-      </select>
-      <label className="ml-6 font-medium text-gray-700">Timeline:</label>
-      <select
-        value={timeline}
-        onChange={(e) => setTimeline(e.target.value as "all" | "6m" | "12m")}
-        className="border rounded px-2 py-1"
-      >
-        <option value="all">All</option>
-        <option value="6m">Last 6 Months</option>
-        <option value="12m">Last 12 Months</option>
-      </select>
-    </div>
-  );
-
-  if (!reviews || reviews.length === 0) {
-    return (
-      <div>
-        {FilterControls}
-        <div className="text-gray-500">No chart data available</div>
-      </div>
-    );
-  }
-
-  // timeline filter for line chart
-  const [localTimeline, setLocalTimeline] = useState<"all" | "6m" | "12m">("all");
-
   // filter reviews by property name
   const filteredReviews =
     propertyFilter === "all"
@@ -120,18 +78,18 @@ export default function DashboardCharts({
   });
 
   // timeline filter logic
-  if (localTimeline !== "all" && months.length > 0) {
+  if (timeline !== "all" && months.length > 0) {
     const now = new Date();
-    months = months.filter((m, idx) => {
+    months = months.filter((m) => {
       const [monthStr, yearStr] = m.split(" ");
       const monthIdx = new Date(`${monthStr} 1, ${yearStr}`).getMonth();
       const year = Number(yearStr);
       const date = new Date(year, monthIdx);
-      if (localTimeline === "6m") {
+      if (timeline === "6m") {
         const sixMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 5, 1);
         return date >= sixMonthsAgo;
       }
-      if (localTimeline === "12m") {
+      if (timeline === "12m") {
         const twelveMonthsAgo = new Date(now.getFullYear(), now.getMonth() - 11, 1);
         return date >= twelveMonthsAgo;
       }
@@ -211,12 +169,8 @@ export default function DashboardCharts({
   });
 
   const propertyNames = Object.keys(propertyMap);
-  const propertyAverages = propertyNames.map((name) => {
-    const arr = propertyMap[name];
-    return arr.reduce((a, b) => a + b, 0) / arr.length;
-  });
 
-  // fix: always show all property labels, even if some have no reviews
+  // always show all property labels, even if some have no reviews
   const allPropertyLabels = propertyList.length > 0 ? propertyList : propertyNames;
   const allPropertyAverages = allPropertyLabels.map((name) => {
     const arr = propertyMap[name];
@@ -231,7 +185,6 @@ export default function DashboardCharts({
         data: allPropertyAverages,
         borderWidth: 1,
         borderRadius: 6,
-        // fill missing data with transparent bar
         backgroundColor: allPropertyAverages.map((v) =>
           v === null ? "rgba(0,0,0,0.05)" : THEME_GREEN_LIGHT
         ),
@@ -388,6 +341,44 @@ export default function DashboardCharts({
       },
     },
   };
+
+  // always render filter controls
+  const FilterControls = (
+    <div className="mb-4 flex items-center gap-4">
+      <label className="font-medium text-gray-700">Filter by property:</label>
+      <select
+        value={propertyFilter}
+        onChange={(e) => setPropertyFilter(e.target.value)}
+        className="border rounded px-2 py-1"
+      >
+        <option value="all">All</option>
+        {propertyList.map((name) => (
+          <option key={name} value={name}>
+            {name}
+          </option>
+        ))}
+      </select>
+      <label className="ml-6 font-medium text-gray-700">Timeline:</label>
+      <select
+        value={timeline}
+        onChange={(e) => setTimeline(e.target.value as "all" | "6m" | "12m")}
+        className="border rounded px-2 py-1"
+      >
+        <option value="all">All</option>
+        <option value="6m">Last 6 Months</option>
+        <option value="12m">Last 12 Months</option>
+      </select>
+    </div>
+  );
+
+  if (!reviews || reviews.length === 0) {
+    return (
+      <div>
+        {FilterControls}
+        <div className="text-gray-500">No chart data available</div>
+      </div>
+    );
+  }
 
   return (
     <div>

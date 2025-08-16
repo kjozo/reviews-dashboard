@@ -1,5 +1,7 @@
+import type { NormalizedReview } from "@/types/reviews";
+
 // normalize google places review for dashboard
-export function normalizeGooglePlacesReview(review: any) {
+export function normalizeGooglePlacesReview(review: Record<string, unknown>): NormalizedReview {
   return {
     id: review.time?.toString() ?? "",
     guestName: review.author_name ?? "Google User",

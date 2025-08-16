@@ -13,8 +13,10 @@ const GOOGLE_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place/detail
 const GOOGLE_PLACE_ID = process.env.GOOGLE_PLACE_ID; // set this in your .env
 const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;   // set this in your .env
 
+import type { NormalizedReview } from "@/types/reviews";
+
 export async function GET() {
-  let reviews: any[] = [];
+  let reviews: NormalizedReview[] = [];
   let source = "hostaway";
 
   // try hostaway api first

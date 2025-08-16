@@ -1,49 +1,22 @@
 "use client";
 
 // dashboard page for reviews
-import { useState, useMemo, useEffect } from "react";
+import { useReviews } from "@/context/ReviewsContext";
+import { useState, useMemo } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import DashboardCharts from "@/components/DashboardCharts";
 import type { NormalizedReview } from "@/types/reviews";
 
 export default function DashboardPage() {
-  // state for reviews, filters, sorting, etc.
-  const [reviews, setReviews] = useState<NormalizedReview[]>([]);
+  const { reviews, setReviews, loading } = useReviews();
+
+  // state for filters, sorting, etc.
   const [propertyFilter, setPropertyFilter] = useState<string>("all");
   const [timeline, setTimeline] = useState<"all" | "6m" | "12m">("all");
-  const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortBy, setSortBy] = useState<keyof NormalizedReview | "published">("departureDate");
   const [sortDir, setSortDir] = useState<"asc" | "desc">("desc");
-
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
-  const [source, setSource] = useState<string>("unknown");
-  const [lastUpdated, setLastUpdated] = useState<string>("");
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
-
-  useEffect(() => {
-    async function fetchReviews() {
-      try {
-        setLoading(true);
-        const res = await fetch("/api/reviews/hostaway");
-        const data = await res.json();
-
-        if (data.status === "success") {
-          setReviews(data.result);
-          setSource(data.source || (data.mock ? "mock" : "api"));
-          setLastUpdated(new Date().toLocaleString());
-        } else {
-          setError(data.message || "Unknown error");
-        }
-      } catch (err) {
-        setError("Failed to fetch reviews");
-      } finally {
-        setLoading(false);
-      }
-    }
-    fetchReviews();
-  }, []);
 
   // get filtered reviews based on property filter and timeline
   const filtered = useMemo(() => {
@@ -96,12 +69,12 @@ export default function DashboardPage() {
   const properties = Array.from(new Set(reviews.map((r) => r.listingName))).filter(
     (name): name is string => typeof name === "string" && !!name
   );
-  const statuses = Array.from(new Set(reviews.map((r) => r.status)));
 
   const totalPages = Math.ceil(sorted.length / pageSize);
   const paged = sorted.slice((page - 1) * pageSize, page * pageSize);
 
-  const handlePublishToggle = async (review: NormalizedReview) => {
+  // publish/unpublish handler
+  const handlePublishToggle = (review: NormalizedReview) => {
     const action = review.status === "published" ? "Unpublish" : "Publish";
     if (
       window.confirm(
@@ -125,14 +98,6 @@ export default function DashboardPage() {
     return (
       <DashboardLayout>
         <div className="text-center p-8 text-gray-500">Loading reviews...</div>
-      </DashboardLayout>
-    );
-  }
-
-  if (error) {
-    return (
-      <DashboardLayout>
-        <div className="text-center p-8 text-red-500">Error: {error}</div>
       </DashboardLayout>
     );
   }
@@ -320,18 +285,6 @@ export default function DashboardPage() {
           timeline={timeline}
           setTimeline={setTimeline}
         />
-      </div>
-
-      {/* footer info */}
-      <div className="mt-4 text-sm text-gray-500">
-        Data source:{" "}
-        {source === "mock"
-          ? "Mock Data"
-          : source === "api"
-          ? "Hostaway API"
-          : "Unknown"}
-        <br />
-        Last updated: {lastUpdated}
       </div>
     </DashboardLayout>
   );

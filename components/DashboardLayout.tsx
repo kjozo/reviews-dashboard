@@ -73,7 +73,7 @@ export default function DashboardLayout({ children }: Props) {
             {!collapsed && <span>Dashboard</span>}
           </a>
           <a
-            href="#"
+            href="/reviews"
             className={`flex items-center py-2 rounded hover:bg-[#e6e3d7] transition-all duration-300 ${
               collapsed ? "justify-center" : "gap-3 px-6 justify-start"
             }`}
