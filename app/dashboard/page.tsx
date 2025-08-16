@@ -7,8 +7,12 @@ import DashboardLayout from "@/components/DashboardLayout";
 import DashboardCharts from "@/components/DashboardCharts";
 import type { NormalizedReview } from "@/types/reviews";
 
+let reviews: NormalizedReview[] = [];
+
 export default function DashboardPage() {
-  const { reviews, setReviews, loading } = useReviews();
+  const { reviews: contextReviews, setReviews, loading } = useReviews();
+
+  reviews = contextReviews;
 
   // state for filters, sorting, etc.
   const [propertyFilter, setPropertyFilter] = useState<string>("all");
@@ -40,8 +44,8 @@ export default function DashboardPage() {
 
   // Sorting logic
   const sorted = [...filtered].sort((a, b) => {
-    let valA: any;
-    let valB: any;
+    let valA: unknown;
+    let valB: unknown;
 
     if (sortBy === "published") {
       valA = a.status === "published" ? 1 : 0;
@@ -53,12 +57,23 @@ export default function DashboardPage() {
 
     if (valA == null) return 1;
     if (valB == null) return -1;
-    if (sortBy === "departureDate") {
-      valA = new Date(valA as string).getTime();
-      valB = new Date(valB as string).getTime();
+    if (sortBy === "departureDate" && typeof valA === "string" && typeof valB === "string") {
+      const dateA = new Date(valA).getTime();
+      const dateB = new Date(valB).getTime();
+      if (dateA < dateB) return sortDir === "asc" ? -1 : 1;
+      if (dateA > dateB) return sortDir === "asc" ? 1 : -1;
+      return 0;
     }
-    if (valA < valB) return sortDir === "asc" ? -1 : 1;
-    if (valA > valB) return sortDir === "asc" ? 1 : -1;
+    if (typeof valA === "number" && typeof valB === "number") {
+      if (valA < valB) return sortDir === "asc" ? -1 : 1;
+      if (valA > valB) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    }
+    if (typeof valA === "string" && typeof valB === "string") {
+      if (valA < valB) return sortDir === "asc" ? -1 : 1;
+      if (valA > valB) return sortDir === "asc" ? 1 : -1;
+      return 0;
+    }
     return 0;
   });
 
@@ -288,4 +303,17 @@ export default function DashboardPage() {
       </div>
     </DashboardLayout>
   );
+}
+
+export function normalizeHostawayReview(review: Record<string, unknown>): NormalizedReview {
+  return {
+    id: review.id as string,
+    listingName: review.listingName as string,
+    guestName: review.guestName as string,
+    rating: typeof review.rating === "number" ? review.rating : null,
+    status: review.status === "published" ? "published" : "unpublished",
+    departureDate: typeof review.departureDate === "string" ? review.departureDate : null,
+    arrivalDate: typeof review.arrivalDate === "string" ? review.arrivalDate : null,
+    publicReview: typeof review.publicReview === "string" ? review.publicReview : null,
+  } as NormalizedReview;
 }
