@@ -10,11 +10,12 @@ const HOSTAWAY_API_URL = `https://api.hostaway.com/v1/reviews?accountId=${proces
 
 // Google Places API
 const GOOGLE_PLACES_API_URL = "https://maps.googleapis.com/maps/api/place/details/json";
-const GOOGLE_PLACE_ID = process.env.GOOGLE_PLACE_ID; // set this in your .env
-const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;   // set this in your .env
+const GOOGLE_PLACE_ID = process.env.GOOGLE_PLACE_ID;
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY;
 
 import type { NormalizedReview } from "@/types/reviews";
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function GET() {
   let reviews: NormalizedReview[] = [];
   let source = "hostaway";
@@ -61,11 +62,11 @@ export async function GET() {
   }
 
   // normalize reviews for dashboard
-  let normalized: any[] = [];
+  let normalized: NormalizedReview[] = [];
   if (source === "hostaway" || source === "mock") {
-    normalized = reviews.map(normalizeHostawayReview);
+    normalized = reviews.map((r: Record<string, unknown>) => normalizeHostawayReview(r));
   } else if (source === "google_places") {
-    normalized = reviews.map(normalizeGooglePlacesReview);
+    normalized = reviews.map((r: Record<string, unknown>) => normalizeGooglePlacesReview(r));
   }
 
   return NextResponse.json({

@@ -3,6 +3,7 @@
 import { ReactNode, useState } from "react";
 import { MdDashboard, MdRateReview } from "react-icons/md";
 import { FaRegWindowRestore } from "react-icons/fa";
+import Image from "next/image";
 
 // constants for colors
 const FLEX_GREEN = "#335C59";
@@ -35,11 +36,13 @@ export default function DashboardLayout({ children }: Props) {
         <div className="flex items-center h-16 text-xl font-bold border-b border-[#e6e3d7] px-4">
           {/* logo: visible when expanded, hidden when collapsed */}
           {!collapsed && (
-            <img
+            <Image
               src="/theflex-logo.png"
               alt="The Flex Logo"
-              className="h-10 w-auto object-contain"
-              style={{ maxWidth: 140 }}
+              width={140}
+              height={40}
+              style={{ objectFit: "contain" }}
+              priority
             />
           )}
           {/* when collapsed, keep space for centering toggle */}

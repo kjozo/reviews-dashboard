@@ -1,18 +1,16 @@
 "use client";
 
-// dashboard page for reviews
+// Only import what you need for rendering the page
 import { useReviews } from "@/context/ReviewsContext";
-import { useState, useMemo } from "react";
 import DashboardLayout from "@/components/DashboardLayout";
 import DashboardCharts from "@/components/DashboardCharts";
 import type { NormalizedReview } from "@/types/reviews";
+import { useState, useMemo } from "react";
 
-let reviews: NormalizedReview[] = [];
+// Do NOT export normalizeHostawayReview from this file
 
 export default function DashboardPage() {
   const { reviews: contextReviews, setReviews, loading } = useReviews();
-
-  reviews = contextReviews;
 
   // state for filters, sorting, etc.
   const [propertyFilter, setPropertyFilter] = useState<string>("all");
@@ -24,7 +22,7 @@ export default function DashboardPage() {
 
   // get filtered reviews based on property filter and timeline
   const filtered = useMemo(() => {
-    let result = reviews;
+    let result = contextReviews;
     if (propertyFilter !== "all") {
       result = result.filter((r) => r.listingName === propertyFilter);
     }
@@ -40,7 +38,7 @@ export default function DashboardPage() {
       });
     }
     return result;
-  }, [reviews, propertyFilter, timeline]);
+  }, [propertyFilter, timeline, contextReviews]);
 
   // Sorting logic
   const sorted = [...filtered].sort((a, b) => {
@@ -81,7 +79,7 @@ export default function DashboardPage() {
     sortBy === col ? (sortDir === "asc" ? "▲" : "▼") : "";
 
   // build property list using listingName instead of ID
-  const properties = Array.from(new Set(reviews.map((r) => r.listingName))).filter(
+  const properties = Array.from(new Set(contextReviews.map((r) => r.listingName))).filter(
     (name): name is string => typeof name === "string" && !!name
   );
 
@@ -145,8 +143,8 @@ export default function DashboardPage() {
         <div className="bg-white p-4 rounded-2xl border-2 border-gray-200 shadow-sm text-center transition hover:scale-105 hover:shadow-md">
           <div className="text-2xl font-bold">
             {(
-              filtered.reduce((sum, r) => sum + (r.rating ?? 0), 0) /
-              (filtered.filter((r) => r.rating != null).length || 1)
+              filtered.reduce<number>((sum: number, r: NormalizedReview) => sum + (r.rating ?? 0), 0) /
+              (filtered.filter((r: NormalizedReview) => r.rating != null).length || 1)
             ).toFixed(1)}
           </div>
           <div className="text-gray-600">Average Rating</div>
@@ -305,15 +303,3 @@ export default function DashboardPage() {
   );
 }
 
-export function normalizeHostawayReview(review: Record<string, unknown>): NormalizedReview {
-  return {
-    id: review.id as string,
-    listingName: review.listingName as string,
-    guestName: review.guestName as string,
-    rating: typeof review.rating === "number" ? review.rating : null,
-    status: review.status === "published" ? "published" : "unpublished",
-    departureDate: typeof review.departureDate === "string" ? review.departureDate : null,
-    arrivalDate: typeof review.arrivalDate === "string" ? review.arrivalDate : null,
-    publicReview: typeof review.publicReview === "string" ? review.publicReview : null,
-  } as NormalizedReview;
-}
