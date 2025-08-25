@@ -1,6 +1,7 @@
 "use client";
 
 import { useRouter } from "next/navigation";
+import { FaHome } from "react-icons/fa";
 
 export default function Home() {
   const router = useRouter();
@@ -13,6 +14,9 @@ export default function Home() {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-8 rounded shadow-md w-full max-w-sm">
+        <div className="flex justify-center mb-6">
+          <FaHome className="text-blue-600" size={48} />
+        </div>
         <h1 className="text-2xl font-bold mb-6 text-center text-gray-900">
           Welcome Back
         </h1>
